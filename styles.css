@@ -1,0 +1,53 @@
+body {
+  background-color: pink;
+}
+
+.card {
+  margin: 5px;
+  padding: 5px;
+  width: 25px;
+  height: 35px;
+  text-align: center;
+  border: solid 2px;
+  border-radius: 8px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.face-down {
+  background: repeating-linear-gradient(
+    45deg,
+    darkgreen 0px,
+    darkgreen 15px,
+    black 17px,
+    red 20px
+  );
+}
+
+.face-up {
+  background: white;
+}
+
+.suit {
+  margin: 3px;
+  font-size: 14px;
+}
+
+.name {
+  /* margin: 5px; */
+  font-size: 16px;
+  font-weight: bold;
+  font-family: sans-serif;
+}
+
+.red {
+  color: red;
+}
+
+.black {
+  color: black;
+}
+
+.clicked {
+  border: solid 2px limegreen;
+}
