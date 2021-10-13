@@ -1,5 +1,5 @@
 body {
-  background-color: pink;
+  background-color: midnightblue;
 }
 
 #container {
@@ -8,6 +8,29 @@ body {
   margin: auto;
   flex-direction: column;
   align-items: center;
+}
+
+table {
+  border-spacing: 80px 5px;
+  font-size: 14px;
+  color: yellow;
+  font-weight: bold;
+  text-align: right;
+  border: solid 1px yellow;
+  border-collapse: collapse;
+  background: grey;
+}
+
+td {
+  padding: 2px 30px;
+}
+
+td + td {
+  border-left: solid 1px yellow;
+}
+
+.table-active {
+  background: green;
 }
 
 #card-container {
@@ -56,7 +79,7 @@ body {
   text-align: right;
   color: red;
   font-size: 30px;
-  text-shadow: 2px 2px 2px yellow;
+  text-shadow: 1px 0 yellow, 0 1px yellow, -1px 0 yellow, 0 -1px yellow;
   font-weight: bold;
 }
 

@@ -23,6 +23,9 @@ muteButton.innerText = 'MUTE';
 document.body.appendChild(muteButton);
 
 const container = document.getElementById('container');
+const payoutTable = document.createElement('table');
+container.appendChild(payoutTable);
+
 const cardDiv = document.createElement('div');
 cardDiv.id = 'card-container';
 container.appendChild(cardDiv);
@@ -120,6 +123,8 @@ const resetGame = () => {
   betOneButton.disabled = false;
   betMaxButton.disabled = false;
   dealButton.disabled = true;
+  const normalCells = document.querySelectorAll('table td');
+  normalCells.forEach((cell) => cell.classList.remove('table-active'));
 };
 
 const getSortedRanks = (cards) => cards.map((card) => card.rank).sort((a, b) => a - b);
@@ -213,7 +218,7 @@ const cardClick = (cardElement, index) => {
   }
 };
 
-const createCardUI = (faceDown = false) => {
+const createCardUI = (faceDown = true, canClick = true) => {
   cardDiv.innerHTML = '';
   for (let i = 0; i < 5; i += 1) {
     const cardElement = document.createElement('div');
@@ -232,9 +237,11 @@ const createCardUI = (faceDown = false) => {
       cardElement.appendChild(name);
       cardElement.appendChild(suit);
 
-      cardElement.addEventListener('click', (e) => {
-        cardClick(e.currentTarget, i);
-      });
+      if (canClick) {
+        cardElement.addEventListener('click', (e) => {
+          cardClick(e.currentTarget, i);
+        });
+      }
     } else {
       cardElement.classList.add('face-down');
     }
@@ -247,7 +254,7 @@ const swapCards = () => {
     const index = indexesToSwap[i];
     hand[index] = deck.pop();
   }
-  createCardUI();
+  createCardUI(false, false);
   const handType = determineHandType(hand);
   let outputMsg = '';
   if (handType in payouts) {
@@ -277,7 +284,7 @@ const dealHand = () => {
     const card = deck.pop();
     hand.push(card);
   }
-  createCardUI();
+  createCardUI(false);
   const handType = determineHandType(hand);
   if (handType) output.innerText = `${handType}`;
   else output.innerText = '';
@@ -287,10 +294,25 @@ const dealHand = () => {
   dealButton.innerText = 'Swap';
 };
 
+const createPayoutTable = () => {
+  const handTypes = Object.keys(payouts);
+  let data;
+
+  for (let i = 0; i < handTypes.length; i += 1) {
+    const newRow = payoutTable.insertRow();
+    const payout = payouts[handTypes[i]];
+    data = [handTypes[i].toUpperCase(), payout, payout * 2, payout * 3, payout * 4, payout * 5];
+    for (let j = 0; j < data.length; j += 1) {
+      const newCell = newRow.insertCell();
+      newCell.appendChild(document.createTextNode(data[j]));
+    }
+  }
+};
+
 betOneButton.addEventListener('click', () => {
   if (handInProgress) {
     handInProgress = false;
-    createCardUI(true);
+    createCardUI();
   }
   output.classList.remove('blink');
   output.innerText = 'Good luck!';
@@ -300,6 +322,10 @@ betOneButton.addEventListener('click', () => {
     credits -= 1;
     betLabel.innerText = `Bet: ${bet}`;
     numCreditsLabel.innerText = `Credits: ${credits}`;
+    const highlightCells = document.querySelectorAll(`table td:nth-child(${bet + 1})`);
+    highlightCells.forEach((cell) => cell.classList.add('table-active'));
+    const normalCells = document.querySelectorAll(`table td:not(:nth-child(${bet + 1}))`);
+    normalCells.forEach((cell) => cell.classList.remove('table-active'));
     dealButton.disabled = false;
     if (bet === 5) {
       betOneButton.disabled = true;
@@ -311,7 +337,7 @@ betOneButton.addEventListener('click', () => {
 betMaxButton.addEventListener('click', () => {
   if (handInProgress) {
     handInProgress = false;
-    createCardUI(true);
+    createCardUI();
   }
   output.classList.remove('blink');
   output.innerText = 'Good luck!';
@@ -321,6 +347,10 @@ betMaxButton.addEventListener('click', () => {
   credits = total - bet;
   betLabel.innerText = `Bet: ${bet}`;
   numCreditsLabel.innerText = `Credits: ${credits}`;
+  const highlightCells = document.querySelectorAll(`table td:nth-child(${bet + 1})`);
+  highlightCells.forEach((cell) => cell.classList.add('table-active'));
+  const normalCells = document.querySelectorAll(`table td:not(:nth-child(${bet + 1}))`);
+  normalCells.forEach((cell) => cell.classList.remove('table-active'));
   betOneButton.disabled = true;
   betMaxButton.disabled = true;
   dealButton.disabled = false;
@@ -332,12 +362,13 @@ dealButton.addEventListener('click', () => {
 });
 
 const playMusic = () => {
-  audio.volume = 0.2;
+  audio.volume = 0.1;
   audio.play();
   document.removeEventListener('click', playMusic);
 };
 
-createCardUI(true);
+createCardUI();
+createPayoutTable();
 document.addEventListener('click', playMusic);
 muteButton.addEventListener('click', () => {
   audio.muted = !audio.muted;
