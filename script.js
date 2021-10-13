@@ -19,38 +19,47 @@ const payouts = {
 
 const container = document.getElementById('container');
 const cardDiv = document.createElement('div');
+cardDiv.id = 'card-container';
 container.appendChild(cardDiv);
 
-const buttonContainer = document.createElement('div');
-container.appendChild(buttonContainer);
-
-const betOneButton = document.createElement('button');
-betOneButton.innerText = 'Bet One';
-buttonContainer.appendChild(betOneButton);
-
-const betMaxButton = document.createElement('button');
-betMaxButton.innerText = 'Bet Max';
-buttonContainer.appendChild(betMaxButton);
-
-const dealButton = document.createElement('button');
-dealButton.innerText = 'Deal';
-dealButton.disabled = true;
-buttonContainer.appendChild(dealButton);
-
 const gameInfo = document.createElement('div');
+gameInfo.id = 'game-info';
 container.appendChild(gameInfo);
 
 const output = document.createElement('p');
-output.innerText = 'Welcome! Please select a bet amount to start.';
+output.classList.add('game-output', 'blink');
+output.innerText = 'Insert credits to play';
 gameInfo.appendChild(output);
 
 const betLabel = document.createElement('p');
+betLabel.classList.add('bet-label');
 betLabel.innerText = `Bet: ${bet}`;
 gameInfo.appendChild(betLabel);
 
 const numCreditsLabel = document.createElement('p');
+numCreditsLabel.classList.add('credits-label');
 numCreditsLabel.innerText = `Credits: ${credits}`;
 gameInfo.appendChild(numCreditsLabel);
+
+const buttonContainer = document.createElement('div');
+buttonContainer.id = 'button-container';
+container.appendChild(buttonContainer);
+
+const betOneButton = document.createElement('button');
+betOneButton.classList.add('bet-button');
+betOneButton.innerText = 'BET ONE';
+buttonContainer.appendChild(betOneButton);
+
+const betMaxButton = document.createElement('button');
+betMaxButton.classList.add('bet-button');
+betMaxButton.innerText = 'BET MAX';
+buttonContainer.appendChild(betMaxButton);
+
+const dealButton = document.createElement('button');
+dealButton.id = 'deal-button';
+dealButton.innerText = 'DRAW';
+dealButton.disabled = true;
+buttonContainer.appendChild(dealButton);
 
 // Get a random index ranging from 0 (inclusive) to max (exclusive).
 const getRandomIndex = (max) => Math.floor(Math.random() * max);
@@ -238,13 +247,20 @@ const swapCards = () => {
   let outputMsg = '';
   if (handType in payouts) {
     credits += bet * payouts[handType];
-    outputMsg = `You had a ${handType}! Play again?`;
+    outputMsg = `${handType}! Play again?`;
   } else {
     outputMsg = 'Nothing at all! Play again?';
   }
 
   numCreditsLabel.innerText = `Credits: ${credits}`;
   output.innerText = outputMsg;
+
+  setTimeout(() => {
+    if (handInProgress) {
+      output.innerText = 'Insert credits to play';
+      output.classList.add('blink');
+    }
+  }, 5000);
   resetGame();
 };
 
@@ -257,9 +273,13 @@ const dealHand = () => {
     hand.push(card);
   }
   createCardUI();
+  const handType = determineHandType(hand);
+  if (handType) output.innerText = `${handType}`;
+  else output.innerText = '';
 
+  betOneButton.disabled = true;
+  betMaxButton.disabled = true;
   dealButton.innerText = 'Swap';
-  output.innerText = 'Good luck!';
 };
 
 betOneButton.addEventListener('click', () => {
@@ -267,16 +287,18 @@ betOneButton.addEventListener('click', () => {
     handInProgress = false;
     createCardUI(true);
   }
+  output.classList.remove('blink');
+  output.innerText = 'Good luck!';
 
   if (bet < 5) {
     bet += 1;
     credits -= 1;
     betLabel.innerText = `Bet: ${bet}`;
     numCreditsLabel.innerText = `Credits: ${credits}`;
+    dealButton.disabled = false;
     if (bet === 5) {
       betOneButton.disabled = true;
       betMaxButton.disabled = true;
-      dealButton.disabled = false;
     }
   }
 });
@@ -286,6 +308,8 @@ betMaxButton.addEventListener('click', () => {
     handInProgress = false;
     createCardUI(true);
   }
+  output.classList.remove('blink');
+  output.innerText = 'Good luck!';
 
   const total = bet + credits;
   bet = 5;

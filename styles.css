@@ -2,11 +2,92 @@ body {
   background-color: pink;
 }
 
+#container {
+  display: flex;
+  max-width: 70vw;
+  margin: auto;
+  flex-direction: column;
+  align-items: center;
+}
+
+#card-container {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+}
+
+#game-info {
+  display: flex;
+  width: 95%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.game-output {
+  flex: 1;
+  text-align: left;
+  color: white;
+  font-size: 20px;
+  font-family: sans-serif;
+  font-weight: bold;
+}
+
+.blink {
+  animation: blinker 1.2s step-start infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
+.bet-label {
+  flex: 1;
+  text-align: center;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  font-family: sans-serif;
+}
+
+.credits-label {
+  flex: 1;
+  text-align: right;
+  color: red;
+  font-size: 30px;
+  text-shadow: 2px 2px 2px yellow;
+  font-weight: bold;
+}
+
+#button-container {
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+
+.bet-button {
+  width: 50px;
+  height: 50px;
+  margin-right: 15px;
+  box-shadow: 1px 1px 3px 2px black;
+  font-weight: bold;
+  background: lightgrey;
+}
+
+#deal-button {
+  background: yellow;
+  width: 70px;
+  height: 50px;
+  font-weight: bold;
+  box-shadow: 1px 1px 3px 2px black;
+}
+
 .card {
-  margin: 5px;
-  padding: 5px;
-  width: 25px;
-  height: 35px;
+  margin: 0.5vw;
+  padding: 0.5vw;
+  width: 12vw;
+  height: 18vw;
   text-align: center;
   border: solid 2px;
   border-radius: 8px;
@@ -15,13 +96,8 @@ body {
 }
 
 .face-down {
-  background: repeating-linear-gradient(
-    45deg,
-    darkgreen 0px,
-    darkgreen 15px,
-    black 17px,
-    red 20px
-  );
+  background-color: #dcdbe5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='12' viewBox='0 0 20 12'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='charlie-brown' fill='%23ac9292' fill-opacity='1'%3E%3Cpath d='M9.8 12L0 2.2V.8l10 10 10-10v1.4L10.2 12h-.4zm-4 0L0 6.2V4.8L7.2 12H5.8zm8.4 0L20 6.2V4.8L12.8 12h1.4zM9.8 0l.2.2.2-.2h-.4zm-4 0L10 4.2 14.2 0h-1.4L10 2.8 7.2 0H5.8z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
 
 .face-up {
@@ -30,12 +106,12 @@ body {
 
 .suit {
   margin: 3px;
-  font-size: 14px;
+  font-size: 9vw;
 }
 
 .name {
   /* margin: 5px; */
-  font-size: 16px;
+  font-size: 7vw;
   font-weight: bold;
   font-family: sans-serif;
 }
