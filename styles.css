@@ -11,8 +11,7 @@ body {
 }
 
 table {
-  border-spacing: 80px 5px;
-  font-size: 14px;
+  font-size: 0.9em;
   color: yellow;
   font-weight: bold;
   text-align: right;
@@ -22,7 +21,7 @@ table {
 }
 
 td {
-  padding: 2px 30px;
+  padding: 2px 2vw;
 }
 
 td + td {
@@ -33,9 +32,18 @@ td + td {
   background: green;
 }
 
+.card-label {
+  margin: 20px 0px 0px 0px;
+  flex: 1;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  font-family: monospace;
+}
+
+#label-container,
 #card-container {
   display: flex;
-  justify-content: space-evenly;
   width: 100%;
 }
 
@@ -48,7 +56,7 @@ td + td {
 
 .game-output {
   flex: 1;
-  text-align: left;
+  text-align: center;
   color: white;
   font-size: 20px;
   font-family: sans-serif;
@@ -65,18 +73,10 @@ td + td {
   }
 }
 
-.bet-label {
-  flex: 1;
-  text-align: center;
-  color: white;
-  font-size: 24px;
-  font-weight: bold;
-  font-family: sans-serif;
-}
-
+.bet-label,
 .credits-label {
   flex: 1;
-  text-align: right;
+  text-align: center;
   color: red;
   font-size: 30px;
   text-shadow: 1px 0 yellow, 0 1px yellow, -1px 0 yellow, 0 -1px yellow;

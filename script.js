@@ -1,5 +1,6 @@
 let deck = [];
 let hand = [];
+let handNum = 1;
 let credits = 100;
 let indexesToSwap = [0, 1, 2, 3, 4];
 let bet = 0;
@@ -26,27 +27,39 @@ const container = document.getElementById('container');
 const payoutTable = document.createElement('table');
 container.appendChild(payoutTable);
 
-const cardDiv = document.createElement('div');
-cardDiv.id = 'card-container';
-container.appendChild(cardDiv);
+const labelContainer = document.createElement('div');
+labelContainer.id = 'label-container';
+container.appendChild(labelContainer);
+
+const cardContainer = document.createElement('div');
+cardContainer.id = 'card-container';
+container.appendChild(cardContainer);
+
+for (let i = 0; i < 5; i += 1) {
+  const holdLabel = document.createElement('p');
+  holdLabel.innerHTML = '&nbsp;';
+  holdLabel.classList.add('card-label');
+  holdLabel.id = `card-label-${i}`;
+  labelContainer.appendChild(holdLabel);
+}
 
 const gameInfo = document.createElement('div');
 gameInfo.id = 'game-info';
 container.appendChild(gameInfo);
 
-const output = document.createElement('p');
-output.classList.add('game-output', 'blink');
-output.innerText = 'Insert credits to play';
-gameInfo.appendChild(output);
-
 const betLabel = document.createElement('p');
 betLabel.classList.add('bet-label');
-betLabel.innerText = `Bet: ${bet}`;
+betLabel.innerText = `BET ${bet}`;
 gameInfo.appendChild(betLabel);
+
+const output = document.createElement('p');
+output.classList.add('game-output', 'blink');
+output.innerText = 'ENTER BET TO PLAY';
+gameInfo.appendChild(output);
 
 const numCreditsLabel = document.createElement('p');
 numCreditsLabel.classList.add('credits-label');
-numCreditsLabel.innerText = `Credits: ${credits}`;
+numCreditsLabel.innerText = `CREDITS ${credits}`;
 gameInfo.appendChild(numCreditsLabel);
 
 const buttonContainer = document.createElement('div');
@@ -65,7 +78,7 @@ buttonContainer.appendChild(betMaxButton);
 
 const dealButton = document.createElement('button');
 dealButton.id = 'deal-button';
-dealButton.innerText = 'DRAW';
+dealButton.innerText = 'DEAL';
 dealButton.disabled = true;
 buttonContainer.appendChild(dealButton);
 
@@ -119,12 +132,14 @@ const resetGame = () => {
   indexesToSwap = [0, 1, 2, 3, 4];
 
   dealButton.innerText = 'Deal';
-  betLabel.innerText = `Bet: ${bet}`;
+  betLabel.innerText = `BET ${bet}`;
   betOneButton.disabled = false;
   betMaxButton.disabled = false;
   dealButton.disabled = true;
   const normalCells = document.querySelectorAll('table td');
   normalCells.forEach((cell) => cell.classList.remove('table-active'));
+  const labels = document.querySelectorAll('.card-label');
+  labels.forEach((label) => { label.innerHTML = '&nbsp;'; });
 };
 
 const getSortedRanks = (cards) => cards.map((card) => card.rank).sort((a, b) => a - b);
@@ -208,6 +223,9 @@ const determineHandType = (cards) => {
 
 const cardClick = (cardElement, index) => {
   hand[index].clicked = !hand[index].clicked;
+  const label = document.getElementById(`card-label-${index}`);
+  if (hand[index].clicked) label.innerHTML = 'HOLD';
+  else label.innerHTML = '&nbsp;';
 
   if (hand[index].clicked) {
     cardElement.classList.add('clicked');
@@ -219,7 +237,7 @@ const cardClick = (cardElement, index) => {
 };
 
 const createCardUI = (faceDown = true, canClick = true) => {
-  cardDiv.innerHTML = '';
+  cardContainer.innerHTML = '';
   for (let i = 0; i < 5; i += 1) {
     const cardElement = document.createElement('div');
     cardElement.classList.add('card');
@@ -245,7 +263,7 @@ const createCardUI = (faceDown = true, canClick = true) => {
     } else {
       cardElement.classList.add('face-down');
     }
-    cardDiv.appendChild(cardElement);
+    cardContainer.appendChild(cardElement);
   }
 };
 
@@ -264,15 +282,17 @@ const swapCards = () => {
     outputMsg = 'Nothing at all! Play again?';
   }
 
-  numCreditsLabel.innerText = `Credits: ${credits}`;
+  numCreditsLabel.innerText = `CREDITS ${credits}`;
   output.innerText = outputMsg;
+  const curHandNum = handNum;
 
   setTimeout(() => {
-    if (handInProgress) {
-      output.innerText = 'Insert credits to play';
+    if (handNum === curHandNum) {
+      createCardUI();
+      output.innerText = 'ENTER BET TO PLAY';
       output.classList.add('blink');
     }
-  }, 5000);
+  }, 10000);
   resetGame();
 };
 
@@ -291,7 +311,7 @@ const dealHand = () => {
 
   betOneButton.disabled = true;
   betMaxButton.disabled = true;
-  dealButton.innerText = 'Swap';
+  dealButton.innerText = 'DRAW';
 };
 
 const createPayoutTable = () => {
@@ -311,6 +331,7 @@ const createPayoutTable = () => {
 
 betOneButton.addEventListener('click', () => {
   if (handInProgress) {
+    handNum += 1;
     handInProgress = false;
     createCardUI();
   }
@@ -320,8 +341,8 @@ betOneButton.addEventListener('click', () => {
   if (bet < 5) {
     bet += 1;
     credits -= 1;
-    betLabel.innerText = `Bet: ${bet}`;
-    numCreditsLabel.innerText = `Credits: ${credits}`;
+    betLabel.innerText = `BET ${bet}`;
+    numCreditsLabel.innerText = `CREDITS ${credits}`;
     const highlightCells = document.querySelectorAll(`table td:nth-child(${bet + 1})`);
     highlightCells.forEach((cell) => cell.classList.add('table-active'));
     const normalCells = document.querySelectorAll(`table td:not(:nth-child(${bet + 1}))`);
@@ -336,6 +357,7 @@ betOneButton.addEventListener('click', () => {
 
 betMaxButton.addEventListener('click', () => {
   if (handInProgress) {
+    handNum += 1;
     handInProgress = false;
     createCardUI();
   }
@@ -345,8 +367,8 @@ betMaxButton.addEventListener('click', () => {
   const total = bet + credits;
   bet = 5;
   credits = total - bet;
-  betLabel.innerText = `Bet: ${bet}`;
-  numCreditsLabel.innerText = `Credits: ${credits}`;
+  betLabel.innerText = `BET ${bet}`;
+  numCreditsLabel.innerText = `CREDITS ${credits}`;
   const highlightCells = document.querySelectorAll(`table td:nth-child(${bet + 1})`);
   highlightCells.forEach((cell) => cell.classList.add('table-active'));
   const normalCells = document.querySelectorAll(`table td:not(:nth-child(${bet + 1}))`);
