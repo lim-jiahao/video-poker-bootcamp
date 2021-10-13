@@ -17,6 +17,11 @@ const payouts = {
   'Jacks or Better': 1,
 };
 
+const audio = document.getElementById('audio');
+const muteButton = document.createElement('button');
+muteButton.innerText = 'MUTE';
+document.body.appendChild(muteButton);
+
 const container = document.getElementById('container');
 const cardDiv = document.createElement('div');
 cardDiv.id = 'card-container';
@@ -326,4 +331,14 @@ dealButton.addEventListener('click', () => {
   else swapCards();
 });
 
+const playMusic = () => {
+  audio.volume = 0.2;
+  audio.play();
+  document.removeEventListener('click', playMusic);
+};
+
 createCardUI(true);
+document.addEventListener('click', playMusic);
+muteButton.addEventListener('click', () => {
+  audio.muted = !audio.muted;
+});
