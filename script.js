@@ -5,6 +5,7 @@ let credits = 100;
 let indexesToSwap = [0, 1, 2, 3, 4];
 let bet = 0;
 let handInProgress = false;
+let idle = true;
 
 const payouts = {
   'Royal Flush': 800,
@@ -131,7 +132,7 @@ const resetGame = () => {
   bet = 0;
   indexesToSwap = [0, 1, 2, 3, 4];
 
-  dealButton.innerText = 'Deal';
+  dealButton.innerText = 'DEAL';
   betLabel.innerText = `BET ${bet}`;
   betOneButton.disabled = false;
   betMaxButton.disabled = false;
@@ -255,6 +256,8 @@ const createCardUI = (faceDown = true, canClick = true) => {
       cardElement.appendChild(name);
       cardElement.appendChild(suit);
 
+      if (indexesToSwap.includes(i)) cardElement.classList.add('draw-swap');
+
       if (canClick) {
         cardElement.addEventListener('click', (e) => {
           cardClick(e.currentTarget, i);
@@ -262,9 +265,13 @@ const createCardUI = (faceDown = true, canClick = true) => {
       }
     } else {
       cardElement.classList.add('face-down');
+      if (idle) {
+        cardElement.classList.add('first-load');
+      }
     }
     cardContainer.appendChild(cardElement);
   }
+  idle = false;
 };
 
 const swapCards = () => {
@@ -288,6 +295,7 @@ const swapCards = () => {
 
   setTimeout(() => {
     if (handNum === curHandNum) {
+      idle = true;
       createCardUI();
       output.innerText = 'ENTER BET TO PLAY';
       output.classList.add('blink');
