@@ -20,9 +20,7 @@ const payouts = {
 };
 
 const audio = document.getElementById('audio');
-const muteButton = document.createElement('button');
-muteButton.innerText = 'MUTE';
-document.body.appendChild(muteButton);
+const muteButton = document.getElementById('mute-button');
 
 const betAudio = document.getElementById('bet-audio');
 betAudio.volume = 0.1;
@@ -436,6 +434,7 @@ dealButton.addEventListener('click', () => {
 });
 
 const playMusic = () => {
+  muteButton.style.display = 'inline-block';
   audio.volume = 0.1;
   audio.play();
   document.removeEventListener('click', playMusic);
@@ -448,4 +447,11 @@ muteButton.addEventListener('click', () => {
   audio.muted = !audio.muted;
   betAudio.muted = !betAudio.muted;
   winAudio.muted = !winAudio.muted;
+  if (audio.muted) {
+    muteButton.classList.add('fa-volume-mute');
+    muteButton.classList.remove('fa-volume-up');
+  } else {
+    muteButton.classList.add('fa-volume-up');
+    muteButton.classList.remove('fa-volume-mute');
+  }
 });

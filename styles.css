@@ -173,10 +173,15 @@ td + td {
   color: black;
 }
 
-/* .clicked {
-  border: solid 3px limegreen;
-} */
-
 button:disabled {
   opacity: 0.5;
+}
+
+#mute-button {
+  display: none;
+  color: white;
+}
+
+#mute-button:hover {
+  cursor: pointer;
 }
