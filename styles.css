@@ -32,6 +32,18 @@ td + td {
   background: green;
 }
 
+.flash {
+  animation-name: flash;
+  animation-duration: 0.5s;
+  animation-iteration-count: 4;
+}
+
+@keyframes flash {
+  50% {
+    opacity: 0;
+  }
+}
+
 .card-label {
   margin: 20px 0px 0px 0px;
   flex: 1;

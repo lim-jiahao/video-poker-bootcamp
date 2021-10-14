@@ -24,6 +24,13 @@ const muteButton = document.createElement('button');
 muteButton.innerText = 'MUTE';
 document.body.appendChild(muteButton);
 
+const betAudio = document.getElementById('bet-audio');
+betAudio.volume = 0.1;
+betAudio.playbackRate = 2;
+const winAudio = document.getElementById('win-audio');
+winAudio.volume = 0.2;
+winAudio.playbackRate = 1.5;
+
 const container = document.getElementById('container');
 const payoutTable = document.createElement('table');
 container.appendChild(payoutTable);
@@ -138,7 +145,7 @@ const resetGame = () => {
   betMaxButton.disabled = false;
   dealButton.disabled = true;
   const normalCells = document.querySelectorAll('table td');
-  normalCells.forEach((cell) => cell.classList.remove('table-active'));
+  normalCells.forEach((cell) => cell.classList.remove('table-active', 'flash'));
   const labels = document.querySelectorAll('.card-label');
   labels.forEach((label) => { label.innerHTML = '&nbsp;'; });
 };
@@ -282,26 +289,51 @@ const swapCards = () => {
   createCardUI(false, false);
   const handType = determineHandType(hand);
   let outputMsg = '';
+  let payout;
+  let win = false;
+
+  const normalCells = document.querySelectorAll('table td');
+  normalCells.forEach((cell) => cell.classList.remove('table-active'));
+
   if (handType in payouts) {
-    credits += bet * payouts[handType];
+    win = true;
+    payout = payouts[handType];
     outputMsg = `${handType}! Play again?`;
+    winAudio.play();
+
+    const index = Object.keys(payouts).indexOf(handType);
+
+    const handTypeCells = document.querySelectorAll(`table tr:nth-child(${index + 1}) td:nth-child(1), table tr:nth-child(${index + 1}) td:nth-child(${bet + 1})`);
+    handTypeCells.forEach((cell) => cell.classList.add('table-active', 'flash'));
   } else {
+    payout = 1;
     outputMsg = 'Nothing at all! Play again?';
   }
 
-  numCreditsLabel.innerText = `CREDITS ${credits}`;
   output.innerText = outputMsg;
-  const curHandNum = handNum;
-
-  setTimeout(() => {
-    if (handNum === curHandNum) {
-      idle = true;
-      createCardUI();
-      output.innerText = 'ENTER BET TO PLAY';
-      output.classList.add('blink');
+  dealButton.disabled = true;
+  let counter = 0;
+  const effect = setInterval(() => {
+    if (win) {
+      credits += 1;
+      numCreditsLabel.innerText = `CREDITS ${credits}`;
     }
-  }, 10000);
-  resetGame();
+    counter += 1;
+    if (counter === bet * payout) {
+      clearInterval(effect);
+      const curHandNum = handNum;
+
+      setTimeout(() => {
+        if (handNum === curHandNum) {
+          idle = true;
+          createCardUI();
+          output.innerText = 'ENTER BET TO PLAY';
+          output.classList.add('blink');
+        }
+      }, 10000);
+      resetGame();
+    }
+  }, 2000 / (bet * payout));
 };
 
 const dealHand = () => {
@@ -314,8 +346,13 @@ const dealHand = () => {
   }
   createCardUI(false);
   const handType = determineHandType(hand);
-  if (handType) output.innerText = `${handType}`;
-  else output.innerText = '';
+  if (handType) {
+    const index = Object.keys(payouts).indexOf(handType);
+
+    const handTypeCell = document.querySelector(`table tr:nth-child(${index + 1}) td:nth-child(1)`);
+    handTypeCell.classList.add('table-active');
+  }
+  output.innerText = 'Please select cards to hold';
 
   betOneButton.disabled = true;
   betMaxButton.disabled = true;
@@ -356,6 +393,10 @@ betOneButton.addEventListener('click', () => {
     const normalCells = document.querySelectorAll(`table td:not(:nth-child(${bet + 1}))`);
     normalCells.forEach((cell) => cell.classList.remove('table-active'));
     dealButton.disabled = false;
+
+    betAudio.pause();
+    betAudio.currentTime = 0;
+    betAudio.play();
     if (bet === 5) {
       betOneButton.disabled = true;
       betMaxButton.disabled = true;
@@ -384,6 +425,7 @@ betMaxButton.addEventListener('click', () => {
   betOneButton.disabled = true;
   betMaxButton.disabled = true;
   dealButton.disabled = false;
+  betAudio.play();
 });
 
 dealButton.addEventListener('click', () => {
@@ -402,4 +444,6 @@ createPayoutTable();
 document.addEventListener('click', playMusic);
 muteButton.addEventListener('click', () => {
   audio.muted = !audio.muted;
+  betAudio.muted = !betAudio.muted;
+  winAudio.muted = !winAudio.muted;
 });
