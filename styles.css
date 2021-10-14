@@ -168,9 +168,9 @@ td + td {
   color: black;
 }
 
-.clicked {
-  border: solid 2px limegreen;
-}
+/* .clicked {
+  border: solid 3px limegreen;
+} */
 
 button:disabled {
   opacity: 0.5;

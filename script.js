@@ -141,8 +141,10 @@ const resetGame = () => {
 
   dealButton.innerText = 'DEAL';
   betLabel.innerText = `BET ${bet}`;
-  betOneButton.disabled = false;
-  betMaxButton.disabled = false;
+  if (credits > 0) {
+    betOneButton.disabled = false;
+    betMaxButton.disabled = false;
+  }
   dealButton.disabled = true;
   const normalCells = document.querySelectorAll('table td');
   normalCells.forEach((cell) => cell.classList.remove('table-active', 'flash'));
@@ -307,7 +309,7 @@ const swapCards = () => {
     handTypeCells.forEach((cell) => cell.classList.add('table-active', 'flash'));
   } else {
     payout = 1;
-    outputMsg = 'Nothing at all! Play again?';
+    outputMsg = credits > 0 ? 'Nothing at all! Play again?' : 'Nothing at all! No credits left';
   }
 
   output.innerText = outputMsg;
@@ -327,7 +329,7 @@ const swapCards = () => {
         if (handNum === curHandNum) {
           idle = true;
           createCardUI();
-          output.innerText = 'ENTER BET TO PLAY';
+          output.innerText = credits > 0 ? 'ENTER BET TO PLAY' : 'GAME OVER';
           output.classList.add('blink');
         }
       }, 10000);
@@ -397,7 +399,7 @@ betOneButton.addEventListener('click', () => {
     betAudio.pause();
     betAudio.currentTime = 0;
     betAudio.play();
-    if (bet === 5) {
+    if (bet === 5 || credits === 0) {
       betOneButton.disabled = true;
       betMaxButton.disabled = true;
     }
@@ -414,7 +416,7 @@ betMaxButton.addEventListener('click', () => {
   output.innerText = 'Good luck!';
 
   const total = bet + credits;
-  bet = 5;
+  bet = Math.min(total, 5);
   credits = total - bet;
   betLabel.innerText = `BET ${bet}`;
   numCreditsLabel.innerText = `CREDITS ${credits}`;
