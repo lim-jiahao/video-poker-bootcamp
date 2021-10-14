@@ -12,12 +12,16 @@ body {
 
 table {
   font-size: 0.9em;
-  color: yellow;
+  color: white;
   font-weight: bold;
   text-align: right;
-  border: solid 1px yellow;
+  border: solid 1px white;
   border-collapse: collapse;
-  background: grey;
+  background: #24c6dc; /* fallback for old browsers */
+  background: linear-gradient(to right, #24c6dc, #514a9d);
+  box-shadow: 0px 0px 30px 15px #0ff;
+  font-family: "Press Start 2P";
+  font-size: 12px;
 }
 
 td {
@@ -25,11 +29,11 @@ td {
 }
 
 td + td {
-  border-left: solid 1px yellow;
+  border-left: solid 1px white;
 }
 
 .table-active {
-  background: green;
+  background: crimson;
 }
 
 .flash {
@@ -70,8 +74,8 @@ td + td {
   flex: 1;
   text-align: center;
   color: white;
-  font-size: 20px;
-  font-family: sans-serif;
+  font-size: 12px;
+  font-family: "Press Start 2P", sans-serif;
   font-weight: bold;
 }
 
@@ -93,6 +97,7 @@ td + td {
   font-size: 30px;
   text-shadow: 1px 0 yellow, 0 1px yellow, -1px 0 yellow, 0 -1px yellow;
   font-weight: bold;
+  font-family: fantasy;
 }
 
 #button-container {
