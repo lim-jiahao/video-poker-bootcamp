@@ -1,5 +1,6 @@
 body {
   background-color: midnightblue;
+  user-select: none;
 }
 
 #container {
@@ -31,6 +32,10 @@ td {
 td + td {
   border-left: solid 1px white;
 }
+
+/* tr + tr {
+  border-top: solid 1px white;
+} */
 
 .table-active {
   background: crimson;
@@ -107,20 +112,45 @@ td + td {
 }
 
 .bet-button {
+  position: relative;
   width: 50px;
   height: 50px;
-  margin-right: 15px;
-  box-shadow: 1px 1px 3px 2px black;
+  margin-right: 25px;
+  border-radius: 10%;
   font-weight: bold;
-  background: lightgrey;
+  background: ghostwhite;
+}
+
+.bet-button:enabled {
+  box-shadow: 0px 0px 10px 6px white;
 }
 
 #deal-button {
+  position: relative;
   background: yellow;
   width: 70px;
   height: 50px;
+  border-radius: 10%;
   font-weight: bold;
-  box-shadow: 1px 1px 3px 2px black;
+}
+
+#deal-button:enabled {
+  box-shadow: 0px 0px 10px 6px yellowgreen;
+}
+
+.bet-button:active,
+#deal-button:active {
+  top: 2px;
+}
+
+button:disabled {
+  opacity: 0.5;
+  border-color: black;
+}
+
+button:enabled:hover,
+.card-hover {
+  cursor: pointer;
 }
 
 .card {
@@ -171,10 +201,6 @@ td + td {
 
 .black {
   color: black;
-}
-
-button:disabled {
-  opacity: 0.5;
 }
 
 #mute-button {

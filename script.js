@@ -266,6 +266,7 @@ const createCardUI = (faceDown = true, canClick = true) => {
       if (indexesToSwap.includes(i)) cardElement.classList.add('draw-swap');
 
       if (canClick) {
+        cardElement.classList.add('card-hover');
         cardElement.addEventListener('click', (e) => {
           cardClick(e.currentTarget, i);
         });
@@ -426,6 +427,7 @@ betMaxButton.addEventListener('click', () => {
   betMaxButton.disabled = true;
   dealButton.disabled = false;
   betAudio.play();
+  dealHand();
 });
 
 dealButton.addEventListener('click', () => {
