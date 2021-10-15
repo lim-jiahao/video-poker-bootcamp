@@ -181,6 +181,7 @@ button:enabled:hover,
 
 .face-up {
   background: white;
+  opacity: 0.6;
 }
 
 .suit {
@@ -201,6 +202,10 @@ button:enabled:hover,
 
 .black {
   color: black;
+}
+
+.hold {
+  opacity: 1;
 }
 
 #mute-button {

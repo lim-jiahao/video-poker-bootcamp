@@ -236,10 +236,10 @@ const cardClick = (cardElement, index) => {
   else label.innerHTML = '&nbsp;';
 
   if (hand[index].clicked) {
-    cardElement.classList.add('clicked');
+    cardElement.classList.add('hold');
     indexesToSwap = indexesToSwap.filter((ele) => ele !== index);
   } else {
-    cardElement.classList.remove('clicked');
+    cardElement.classList.remove('hold');
     indexesToSwap.push(index);
   }
 };
@@ -270,6 +270,9 @@ const createCardUI = (faceDown = true, canClick = true) => {
         cardElement.addEventListener('click', (e) => {
           cardClick(e.currentTarget, i);
         });
+      }
+      else {
+        cardElement.classList.add('hold');
       }
     } else {
       cardElement.classList.add('face-down');
@@ -401,6 +404,7 @@ betOneButton.addEventListener('click', () => {
     if (bet === 5 || credits === 0) {
       betOneButton.disabled = true;
       betMaxButton.disabled = true;
+      dealHand();
     }
   }
 });
