@@ -33,28 +33,16 @@ const container = document.getElementById('container');
 const payoutTable = document.createElement('table');
 container.appendChild(payoutTable);
 
-const labelContainer = document.createElement('div');
-labelContainer.id = 'label-container';
-container.appendChild(labelContainer);
-
 const cardContainer = document.createElement('div');
 cardContainer.id = 'card-container';
 container.appendChild(cardContainer);
-
-for (let i = 0; i < 5; i += 1) {
-  const holdLabel = document.createElement('p');
-  holdLabel.innerHTML = '&nbsp;';
-  holdLabel.classList.add('card-label');
-  holdLabel.id = `card-label-${i}`;
-  labelContainer.appendChild(holdLabel);
-}
 
 const gameInfo = document.createElement('div');
 gameInfo.id = 'game-info';
 container.appendChild(gameInfo);
 
 const betLabel = document.createElement('p');
-betLabel.classList.add('bet-label');
+betLabel.classList.add('bet-credits-label');
 betLabel.innerText = `BET ${bet}`;
 gameInfo.appendChild(betLabel);
 
@@ -64,7 +52,7 @@ output.innerText = 'ENTER BET TO PLAY';
 gameInfo.appendChild(output);
 
 const numCreditsLabel = document.createElement('p');
-numCreditsLabel.classList.add('credits-label');
+numCreditsLabel.classList.add('bet-credits-label');
 numCreditsLabel.innerText = `CREDITS ${credits}`;
 gameInfo.appendChild(numCreditsLabel);
 
@@ -146,8 +134,6 @@ const resetGame = () => {
   dealButton.disabled = true;
   const normalCells = document.querySelectorAll('table td');
   normalCells.forEach((cell) => cell.classList.remove('table-active', 'flash'));
-  const labels = document.querySelectorAll('.card-label');
-  labels.forEach((label) => { label.innerHTML = '&nbsp;'; });
 };
 
 const getSortedRanks = (cards) => cards.map((card) => card.rank).sort((a, b) => a - b);
@@ -231,9 +217,6 @@ const determineHandType = (cards) => {
 
 const cardClick = (cardElement, index) => {
   hand[index].clicked = !hand[index].clicked;
-  const label = document.getElementById(`card-label-${index}`);
-  if (hand[index].clicked) label.innerHTML = 'HOLD';
-  else label.innerHTML = '&nbsp;';
 
   if (hand[index].clicked) {
     cardElement.classList.add('hold');

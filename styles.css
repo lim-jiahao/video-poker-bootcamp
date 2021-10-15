@@ -5,7 +5,6 @@ body {
 
 #container {
   display: flex;
-  max-width: 70vw;
   margin: auto;
   flex-direction: column;
   align-items: center;
@@ -13,6 +12,7 @@ body {
 
 table {
   font-size: 0.9em;
+  height: 18vh;
   color: white;
   font-weight: bold;
   text-align: right;
@@ -62,21 +62,19 @@ td + td {
   font-family: monospace;
 }
 
-#label-container,
 #card-container {
   display: flex;
-  width: 100%;
+  margin-top: 20px;
 }
 
 #game-info {
   display: flex;
-  width: 95%;
-  justify-content: space-between;
+  width: 65%;
   align-items: center;
 }
 
 .game-output {
-  flex: 1;
+  flex: 2;
   text-align: center;
   color: white;
   font-size: 12px;
@@ -94,8 +92,7 @@ td + td {
   }
 }
 
-.bet-label,
-.credits-label {
+.bet-credits-label {
   flex: 1;
   text-align: center;
   color: red;
@@ -156,13 +153,11 @@ button:enabled:hover,
 .card {
   margin: 0.5vw;
   padding: 0.5vw;
-  width: 12vw;
-  height: 18vw;
+  width: 130px;
+  height: 195px;
   text-align: center;
   border: solid 2px;
   border-radius: 8px;
-  display: inline-block;
-  vertical-align: top;
 }
 
 .first-load {
@@ -181,17 +176,17 @@ button:enabled:hover,
 
 .face-up {
   background: white;
-  opacity: 0.6;
+  opacity: 0.5;
 }
 
 .suit {
   margin: 3px;
-  font-size: 9vw;
+  font-size: 96px;
 }
 
 .name {
   /* margin: 5px; */
-  font-size: 7vw;
+  font-size: 77px;
   font-weight: bold;
   font-family: sans-serif;
 }
@@ -215,4 +210,38 @@ button:enabled:hover,
 
 #mute-button:hover {
   cursor: pointer;
+}
+
+@media (max-width: 800px) {
+  table {
+    font-size: 7px;
+  }
+
+  .card {
+    width: 16vw;
+    height: 24vw;
+  }
+
+  .name {
+    font-size: 9vw;
+  }
+
+  .suit {
+    font-size: 12vw;
+  }
+
+  #game-info {
+    flex-direction: column;
+    width: 95%;
+  }
+
+  .bet-credits-label {
+    margin: 20px 0;
+    font-size: 24px;
+  }
+
+  .game-output {
+    margin: 0;
+    font-size: 10px;
+  }
 }
