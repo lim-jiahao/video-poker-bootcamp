@@ -5,7 +5,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    <title>SWE101</title>
+    <title>Video Poker</title>
     <link rel="stylesheet" href="styles.css" />
     <link
       rel="stylesheet"
@@ -25,13 +25,27 @@
   </head>
 
   <body>
-    <!-- <h1 id="header">Video Poker 🚀</h1> -->
-    <div id="container"></div>
+    <div id="container">
+      <table id="payout-table"></table>
+      <div id="card-container"></div>
+      <div id="game-info">
+        <p id="bet-label" class="bet-credits-label">BET 0</p>
+        <p id="output-label" class="game-output blink">ENTER BET TO PLAY</p>
+        <p id="credits-label" class="bet-credits-label">CREDITS 100</p>
+      </div>
+      <div id="button-container">
+        <button id="bet-one" class="bet-button">BET ONE</button>
+        <button id="bet-max" class="bet-button">BET MAX</button>
+        <button id="deal-button" disabled>DEAL</button>
+      </div>
+    </div>
     <audio id="audio" src="sounds/SIKPOKEMONBEATS.mp3" loop></audio>
     <audio id="bet-audio" src="sounds/bet.mp3"></audio>
     <audio id="win-audio" src="sounds/win.mp3"></audio>
     <i id="mute-button" class="fas fa-volume-up fa-2x"></i>
     <!-- Import program logic -->
+    <script src="game-utils.js"></script>
+    <script src="ui-helper.js"></script>
     <script src="script.js"></script>
   </body>
 </html>
