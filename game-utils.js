@@ -206,22 +206,17 @@ const getCombinations = (source, k) => {
   }
 
   // Algorithm description:
-  // To get k-combinations of a set, we want to join each element
-  // with all (k-1)-combinations of the other elements. The set of
-  // these k-sized sets would be the desired result. However, as we
-  // represent sets with lists, we need to take duplicates into
-  // account. To avoid producing duplicates and also unnecessary
-  // computing, we use the following approach: each element i
-  // divides the list into three: the preceding elements, the
-  // current element i, and the subsequent elements. For the first
-  // element, the list of preceding elements is empty. For element i,
-  // we compute the (k-1)-computations of the subsequent elements,
-  // join each with the element i, and store the joined to the set of
-  // computed k-combinations. We do not need to take the preceding
-  // elements into account, because they have already been the i:th
-  // element so they are already computed and stored. When the length
-  // of the subsequent list drops below (k-1), we cannot find any
-  // (k-1)-combs, hence the upper limit for the iteration:
+  // To get k-combinations of a set, we want to join each element with all (k-1)-combinations
+  // of the other elements. The set of these k-sized sets would be the desired result.
+  // However, as we represent sets with lists, we need to take duplicates into account.
+  // To avoid producing duplicates and also unnecessary computing, we use the following approach:
+  // each element i divides the list into three: the preceding elements, the current element i,
+  // and the subsequent elements. For the first element, the list of preceding elements is empty.
+  // For element i, we compute the (k-1)-computations of the subsequent elements, join each
+  // with the element i, and store the joined to the set of computed k-combinations.
+  // We do not need to take the preceding elements into account, because they have already been
+  // the i:th element so they are already computed and stored. When the length of the subsequent
+  // list drops below (k-1), we cannot find any (k-1)-combs, hence the upper limit for the iteration
   combs = [];
   for (i = 0; i < source.length - k + 1; i += 1) {
     // head is a list that includes only our current element.
@@ -245,8 +240,10 @@ const getCombinations = (source, k) => {
  * @returns {Array} - An array of probabilities with indexes corresponding to handTypes
  */
 const calculateProbabilities = (curDeck, curHand) => {
-  // Don't show probabilities if user hasn't indicated to hold any cards
-  if (curHand.length === 0) return new Array(handTypes.length).fill('-');
+  // Don't show probabilities if the user chooses to hold 1 card or less
+  // This is because there are too many combinations, 47C4 = 178365 and 47C5 = 1533939
+  // getCombinations takes a while to compute them and there is visible lag
+  if (curHand.length <= 1) return new Array(handTypes.length).fill('-');
 
   const probabilities = new Array(handTypes.length).fill(0);
   const cardsToDraw = 5 - curHand.length;
