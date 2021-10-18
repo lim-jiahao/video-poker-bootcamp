@@ -52,7 +52,7 @@ const generateCard = (cardRank, suit) => {
     name: cardName,
     colour: suit < 2 ? 'red' : 'black',
     rank: cardRank,
-    clicked: false,
+    keep: false,
   };
   return card;
 };

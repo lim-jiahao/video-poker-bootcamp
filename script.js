@@ -11,7 +11,7 @@ let handInProgress = false;
 
 // From ui-helper
 /* globals betAudio, winAudio, betLabel, output, numCreditsLabel */
-/* globals betOneButton, betMaxButton, dealButton, indexesToSwap, resetUI */
+/* globals betOneButton, betMaxButton, dealButton, resetUI */
 /* globals createFaceDownCardsUI, createFaceUpCardsUI, clearTableColors, updateTableProbabilities */
 /* globals updateTablePayouts, createTableFlashEffect, highlightTableHandType */
 
@@ -30,9 +30,8 @@ const resetGame = () => {
  * Called after the user chooses cards to swap and clicks on 'Draw'
  */
 const swapCards = () => {
-  for (let i = 0; i < indexesToSwap.length; i += 1) {
-    const index = indexesToSwap[i];
-    hand[index] = deck.pop();
+  for (let i = 0; i < hand.length; i += 1) {
+    if (!hand[i].keep) hand[i] = deck.pop();
   }
   createFaceUpCardsUI(hand);
 };

@@ -25,10 +25,6 @@ const betOneButton = document.getElementById('bet-one');
 const betMaxButton = document.getElementById('bet-max');
 const dealButton = document.getElementById('deal-button');
 
-// An array storing the indexes the user intends to swap
-// This will be updated at gameplay, it is kept here as it is mainly used in UI functions
-let indexesToSwap = [0, 1, 2, 3, 4];
-
 /**
  * Populate table
  */
@@ -94,18 +90,17 @@ const highlightTableHandType = (row) => {
  */
 const cardClick = (cardElement, index, playerHand, curDeck) => {
   // Set the clicked property of the card
-  playerHand[index].clicked = !playerHand[index].clicked;
-  const keptCards = playerHand.filter((card) => card.clicked);
+  playerHand[index].keep = !playerHand[index].keep;
+
+  const keptCards = playerHand.filter((card) => card.keep);
   const probabilities = calculateProbabilities(curDeck, keptCards);
   updateTableProbabilities(probabilities);
 
   // Use clicked property to apply styling to the element and change indexes to swap
-  if (playerHand[index].clicked) {
+  if (playerHand[index].keep) {
     cardElement.classList.add('hold');
-    indexesToSwap = indexesToSwap.filter((ele) => ele !== index);
   } else {
     cardElement.classList.remove('hold');
-    indexesToSwap.push(index);
   }
 };
 
@@ -134,7 +129,7 @@ const createFaceUpCardsUI = (playerHand, canClick = false, curDeck = null) => {
     cardElement.appendChild(suit);
 
     // if user intends to swap this card, then add animation effect for when it appears
-    if (indexesToSwap.includes(i)) cardElement.classList.add('draw-swap');
+    if (!playerHand[i].keep) cardElement.classList.add('draw-swap');
 
     if (canClick) {
       // if the card is clickable i.e. before swapping
@@ -183,7 +178,6 @@ const resetUI = (credits) => {
     betMaxButton.disabled = false;
   }
   dealButton.disabled = true;
-  indexesToSwap = [0, 1, 2, 3, 4];
 };
 
 /**
