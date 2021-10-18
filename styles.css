@@ -13,7 +13,7 @@ table {
   height: 18vh;
   color: white;
   font-weight: bold;
-  text-align: right;
+  text-align: center;
   border: solid 1px white;
   border-collapse: collapse;
   background: #24c6dc; /* fallback for old browsers */
@@ -23,10 +23,16 @@ table {
   font-size: 12px;
 }
 
+th {
+  border-bottom: solid 1.5px white;
+}
+
+th,
 td {
   padding: 2px 2vw;
 }
 
+th + th,
 td + td {
   border-left: solid 1px white;
 }

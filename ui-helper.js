@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-/* globals CARDS_IN_HAND, payouts, handTypes */
+/* globals CARDS_IN_HAND, payouts, handTypes, calculateProbabilities */
 
 /**
  * Get HTML elements already created in index.html and store as globals
@@ -14,7 +14,7 @@ const winAudio = document.getElementById('win-audio');
 winAudio.volume = 0.2;
 winAudio.playbackRate = 1.5;
 
-const payoutTable = document.getElementById('payout-table');
+const payoutTable = document.querySelector('table tbody');
 const cardContainer = document.getElementById('card-container');
 
 const betLabel = document.getElementById('bet-label');
@@ -36,7 +36,7 @@ let data;
 for (let i = 0; i < handTypes.length; i += 1) {
   const newRow = payoutTable.insertRow();
   const payout = payouts[handTypes[i]];
-  data = [handTypes[i].toUpperCase(), payout, payout * 2, payout * 3, payout * 4, payout * 5];
+  data = [handTypes[i].toUpperCase(), payout, '-'];
   for (let j = 0; j < data.length; j += 1) {
     const newCell = newRow.insertCell();
     newCell.appendChild(document.createTextNode(data[j]));
@@ -44,13 +44,60 @@ for (let i = 0; i < handTypes.length; i += 1) {
 }
 
 /**
+ * Clear all table colors
+ */
+const clearTableColors = () => {
+  const normalCells = document.querySelectorAll('table tbody td');
+  normalCells.forEach((cell) => cell.classList.remove('table-active', 'flash'));
+};
+
+/**
+ * Update the probability column
+ * @param {Array} probArr - Probability values to update
+ */
+const updateTableProbabilities = (probArr) => {
+  const probabilityCells = document.querySelectorAll('table tbody td:nth-child(3)');
+  probabilityCells.forEach((cell, index) => { cell.innerText = probArr[index]; });
+};
+
+/**
+ * Update the payout column based on the bet size
+ * @param {number} bet
+ */
+const updateTablePayouts = (bet) => {
+  const payoutCells = document.querySelectorAll('table tbody td:nth-child(2)');
+  payoutCells.forEach((cell, index) => { cell.innerText = payouts[handTypes[index]] * bet; });
+};
+
+/**
+ * Create a flashing effect when a player wins the hand
+ * @param {number} row - The row num to flash
+ */
+const createTableFlashEffect = (row) => {
+  const handTypeCells = document.querySelectorAll(`table tbody tr:nth-child(${row}) td`);
+  handTypeCells.forEach((cell) => cell.classList.add('table-active', 'flash'));
+};
+
+/**
+ * Used when user already has a particular hand type before swapping, highlight the hand type
+ * @param {number} row - The row num to highlight
+ */
+const highlightTableHandType = (row) => {
+  const handTypeCell = document.querySelector(`table tbody tr:nth-child(${row}) td:nth-child(1)`);
+  handTypeCell.classList.add('table-active');
+};
+
+/**
  * Called whenever a card is clicked, when user is deciding what cards to hold
  * @param {HTMLDivElement} cardElement - The HTML element of the card clicked
  * @param {number} index - The index of the card clicked
  */
-const cardClick = (cardElement, index, playerHand) => {
+const cardClick = (cardElement, index, playerHand, curDeck) => {
   // Set the clicked property of the card
   playerHand[index].clicked = !playerHand[index].clicked;
+  const keptCards = playerHand.filter((card) => card.clicked);
+  const probabilities = calculateProbabilities(curDeck, keptCards);
+  updateTableProbabilities(probabilities);
 
   // Use clicked property to apply styling to the element and change indexes to swap
   if (playerHand[index].clicked) {
@@ -67,7 +114,7 @@ const cardClick = (cardElement, index, playerHand) => {
  * @param {Array} playerHand - Array of card objects
  * @param {boolean} canClick - Can cards be clicked or not
  */
-const createFaceUpCardsUI = (playerHand, canClick = true) => {
+const createFaceUpCardsUI = (playerHand, canClick = false, curDeck = null) => {
   cardContainer.innerHTML = ''; // clear the card container
   for (let i = 0; i < CARDS_IN_HAND; i += 1) {
     const cardElement = document.createElement('div');
@@ -94,7 +141,7 @@ const createFaceUpCardsUI = (playerHand, canClick = true) => {
       // add a cursor effect on hover and add event listener for clicks
       cardElement.classList.add('card-hover');
       cardElement.addEventListener('click', (e) => {
-        cardClick(e.currentTarget, i, playerHand);
+        cardClick(e.currentTarget, i, playerHand, curDeck);
       });
     } else {
       // not clickable i.e. after swapping
@@ -125,38 +172,6 @@ const createFaceDownCardsUI = (isIdle) => {
 };
 
 /**
- * Sets one of four table effects
- * @param {string} type - Type of table effect
- * @param {number} row - Row affected
- * @param {number} column - Column affected
- */
-const setTableEffects = (type, row, column) => {
-  if (type === 'clearAll') {
-    // Clear all table effects
-    const normalCells = document.querySelectorAll('table td');
-    normalCells.forEach((cell) => cell.classList.remove('table-active', 'flash'));
-  }
-  else if (type === 'flash') {
-    // Used when user wins, flash his hand type and win amount
-    const handTypeCells = document.querySelectorAll(`table tr:nth-child(${row}) td:nth-child(1),
-                                                    table tr:nth-child(${row}) td:nth-child(${column})`);
-    handTypeCells.forEach((cell) => cell.classList.add('table-active', 'flash'));
-  }
-  else if (type === 'highlightHandType') {
-    // Used when user already has a particular hand type before swapping, highlight the hand type
-    const handTypeCell = document.querySelector(`table tr:nth-child(${row}) td:nth-child(1)`);
-    handTypeCell.classList.add('table-active');
-  }
-  else if (type === 'highlightColumn') {
-    // Used when the user is betting and before swapping, highlight the column of his bet amt
-    const columnCells = document.querySelectorAll(`table td:nth-child(${column})`);
-    columnCells.forEach((cell) => cell.classList.add('table-active'));
-    const otherCells = document.querySelectorAll(`table td:not(:nth-child(${column}))`);
-    otherCells.forEach((cell) => cell.classList.remove('table-active'));
-  }
-};
-
-/**
  * Resets the state of the UI after every hand
  * @param {number} credits
  */
@@ -168,7 +183,6 @@ const resetUI = (credits) => {
     betMaxButton.disabled = false;
   }
   dealButton.disabled = true;
-  setTableEffects('clearAll', null, null);
   indexesToSwap = [0, 1, 2, 3, 4];
 };
 

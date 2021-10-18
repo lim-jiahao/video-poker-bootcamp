@@ -179,3 +179,95 @@ const determineHandType = (cards) => {
 
   return null;
 };
+
+/**
+ * Function to get every combination of k elements from a source array
+ * Credits: https://gist.github.com/axelpale/3118596
+ * @param {Array} source
+ * @param {number} k
+ * @returns {Array} - An array of combinations, each combination itself being an array
+ */
+const getCombinations = (source, k) => {
+  let i; let j; let combs; let head; let tailcombs;
+
+  // There is no way to take e.g. sets of 5 elements from a set of 4.
+  if (k > source.length || k <= 0) return [null];
+
+  // K-sized set has only one K-sized subset.
+  if (k === source.length) return [source];
+
+  // There is N 1-sized subsets in a N-sized set.
+  if (k === 1) {
+    combs = [];
+    for (i = 0; i < source.length; i += 1) {
+      combs.push([source[i]]);
+    }
+    return combs;
+  }
+
+  // Algorithm description:
+  // To get k-combinations of a set, we want to join each element
+  // with all (k-1)-combinations of the other elements. The set of
+  // these k-sized sets would be the desired result. However, as we
+  // represent sets with lists, we need to take duplicates into
+  // account. To avoid producing duplicates and also unnecessary
+  // computing, we use the following approach: each element i
+  // divides the list into three: the preceding elements, the
+  // current element i, and the subsequent elements. For the first
+  // element, the list of preceding elements is empty. For element i,
+  // we compute the (k-1)-computations of the subsequent elements,
+  // join each with the element i, and store the joined to the set of
+  // computed k-combinations. We do not need to take the preceding
+  // elements into account, because they have already been the i:th
+  // element so they are already computed and stored. When the length
+  // of the subsequent list drops below (k-1), we cannot find any
+  // (k-1)-combs, hence the upper limit for the iteration:
+  combs = [];
+  for (i = 0; i < source.length - k + 1; i += 1) {
+    // head is a list that includes only our current element.
+    head = source.slice(i, i + 1);
+    // We take smaller combinations from the subsequent elements
+    tailcombs = getCombinations(source.slice(i + 1), k - 1);
+    // For each (k-1)-combination we join it with the current
+    // and store it to the set of k-combinations.
+    for (j = 0; j < tailcombs.length; j += 1) {
+      combs.push(head.concat(tailcombs[j]));
+    }
+  }
+  return combs;
+};
+
+/**
+ * Calculates probabilities of getting each respective hand type given the current deck,
+ * and the cards the user has indicated to hold
+ * @param {Array} curDeck - Array of card objects representing the current deck
+ * @param {Array} curHand - Array of card objects representing the user's intended cards to hold
+ * @returns {Array} - An array of probabilities with indexes corresponding to handTypes
+ */
+const calculateProbabilities = (curDeck, curHand) => {
+  // Don't show probabilities if user hasn't indicated to hold any cards
+  if (curHand.length === 0) return new Array(handTypes.length).fill('-');
+
+  const probabilities = new Array(handTypes.length).fill(0);
+  const cardsToDraw = 5 - curHand.length;
+  const combinations = getCombinations(curDeck, cardsToDraw);
+
+  if (cardsToDraw === 0) {
+    // If user keeps all cards, then he ends up with the current hand type
+    const handType = determineHandType(curHand);
+    if (handTypes.includes(handType)) probabilities[handTypes.indexOf(handType)] = 1;
+  } else {
+    // Consider all possible combinations, and store the tallies of the resulting hand type
+    for (let i = 0; i < combinations.length; i += 1) {
+      const newHand = curHand.concat(combinations[i]);
+      const handType = determineHandType(newHand);
+      if (handTypes.includes(handType)) probabilities[handTypes.indexOf(handType)] += 1;
+    }
+  }
+
+  // Calculate probabilities based on tallies
+  for (let i = 0; i < probabilities.length; i += 1) {
+    probabilities[i] = `${((probabilities[i] / combinations.length) * 100).toFixed(3)}%`;
+  }
+  return probabilities;
+};

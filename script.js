@@ -11,8 +11,9 @@ let handInProgress = false;
 
 // From ui-helper
 /* globals betAudio, winAudio, betLabel, output, numCreditsLabel */
-/* globals betOneButton, betMaxButton, dealButton, indexesToSwap */
-/* globals createFaceDownCardsUI, createFaceUpCardsUI, setTableEffects, resetUI */
+/* globals betOneButton, betMaxButton, dealButton, indexesToSwap, resetUI */
+/* globals createFaceDownCardsUI, createFaceUpCardsUI, clearTableColors, updateTableProbabilities */
+/* globals updateTablePayouts, createTableFlashEffect, highlightTableHandType */
 
 // From game-utils
 /* globals MAX_BET, CARDS_IN_HAND, payouts, handTypes, makeDeck, determineHandType */
@@ -33,7 +34,7 @@ const swapCards = () => {
     const index = indexesToSwap[i];
     hand[index] = deck.pop();
   }
-  createFaceUpCardsUI(hand, false);
+  createFaceUpCardsUI(hand);
 };
 
 /**
@@ -44,7 +45,7 @@ const payoutPlayer = () => {
   let payout = 0;
   const win = handType in payouts;
 
-  setTableEffects('clearAll', null, null);
+  clearTableColors();
 
   if (win) {
     payout = payouts[handType];
@@ -52,7 +53,7 @@ const payoutPlayer = () => {
     winAudio.play();
 
     const index = handTypes.indexOf(handType);
-    setTableEffects('flash', index + 1, bet + 1);
+    createTableFlashEffect(index + 1);
   } else {
     output.innerText = credits > 0 ? 'Nothing at all! Play again?' : 'Nothing at all! No credits left';
   }
@@ -74,6 +75,9 @@ const payoutPlayer = () => {
       setTimeout(() => {
         if (handNum === curHandNum) {
           // Wait 10 secs, if user has not started a new hand
+          clearTableColors();
+          updateTableProbabilities(new Array(handTypes.length).fill('-'));
+          updateTablePayouts(1);
           createFaceDownCardsUI(true);
           output.innerText = credits > 0 ? 'ENTER BET TO PLAY' : 'GAME OVER';
           output.classList.add('blink');
@@ -99,11 +103,11 @@ const dealHand = () => {
     const card = deck.pop();
     hand.push(card);
   }
-  createFaceUpCardsUI(hand);
+  createFaceUpCardsUI(hand, true, deck);
   const handType = determineHandType(hand);
   if (handType) {
     const index = handTypes.indexOf(handType);
-    setTableEffects('highlightHandType', index + 1, null);
+    highlightTableHandType(index + 1);
   }
   output.innerText = 'Please select cards to hold';
 
@@ -120,6 +124,8 @@ const increaseBet = (amt) => {
   if (handInProgress) {
     handNum += 1;
     handInProgress = false;
+    clearTableColors();
+    updateTableProbabilities(new Array(handTypes.length).fill('-'));
     createFaceDownCardsUI(false);
   }
 
@@ -131,7 +137,8 @@ const increaseBet = (amt) => {
   credits = total - bet;
   betLabel.innerText = `BET ${bet}`;
   numCreditsLabel.innerText = `CREDITS ${credits}`;
-  setTableEffects('highlightColumn', null, bet + 1);
+
+  updateTablePayouts(bet);
 
   betAudio.pause();
   betAudio.currentTime = 0;
