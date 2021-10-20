@@ -81,7 +81,7 @@ const makeDeck = () => {
 const getSortedRanks = (cards) => cards.map((card) => card.rank).sort((a, b) => a - b);
 
 /**
- * Given an array of card objects, returns an array of the sorted ranks
+ * Given an array of card objects, returns an array of the suits
  * @param {Array} cards
  * @returns {Array} - Array of strings
  */

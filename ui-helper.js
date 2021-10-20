@@ -97,11 +97,8 @@ const cardClick = (cardElement, index, playerHand, curDeck) => {
   updateTableProbabilities(probabilities);
 
   // Use clicked property to apply styling to the element and change indexes to swap
-  if (playerHand[index].keep) {
-    cardElement.classList.add('hold');
-  } else {
-    cardElement.classList.remove('hold');
-  }
+  if (playerHand[index].keep) cardElement.classList.add('hold');
+  else cardElement.classList.remove('hold');
 };
 
 /**
